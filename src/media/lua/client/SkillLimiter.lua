@@ -104,6 +104,13 @@ local function AddXP(character, perk, level)
         return nil
     end
 
+    --- **Check if level is null**
+    if not level then
+        errHandler.errMsg("SkillLimiter.AddXP(character, perk, level)",
+                errHandler.err.IS_NULL_LEVEL)
+        return nil
+    end
+
     --- **Check if CreateCharacterMaxSkillObj is null**
     if not CreateCharacterMaxSkillObj then
         errHandler.errMsg("SkillLimiter.AddXP(character, perk, level)",
@@ -111,7 +118,7 @@ local function AddXP(character, perk, level)
         return nil
     end
 
-    blockLevel.checkLevelMax(character, perk, CreateCharacterMaxSkillObj)
+    blockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
 end
 
 --- **Init Character**
@@ -132,10 +139,6 @@ end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(AddXP)
-Events.AddXP.Add(function (character, perk, level)
-    print("AddXP - " .. tostring(level))
-    
-end)
 Events.OnGameStart.Add(OnGameStart)
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 

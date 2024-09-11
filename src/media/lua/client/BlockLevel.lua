@@ -78,27 +78,8 @@ end
 ---@return void
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
-function BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, perk)
+function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
     --- **Check if character is nil**
-    if not character then
-        errHandler.errMsg("BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, perk)",
-                errHandler.err.IS_NULL_CHARACTERS)
-        return nil
-    end
-
-    --- **Check if CreateCharacterMaxSkillObj is nil**
-    if not CreateCharacterMaxSkillObj then
-        errHandler.errMsg("BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, perk)",
-                " CreateCharacterMaxSkillObj " .. errHandler.err.IS_NULL)
-        return nil
-    end
-
-    --- **Check if perk is nil**
-    if not perk then
-        errHandler.errMsg("BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, perk)",
-                errHandler.err.IS_NULL_PERK)
-        return nil
-    end
 
     local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
     local maxLevel = characterPz.EnumNumbers.TEN
@@ -110,7 +91,9 @@ function BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, p
             end
 
             if currentPerkLevel >= v:getMaxLevel() then
-                BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel())
+                characterPz.addXP_PZ(character, v:getPerk(), -level, true, false, false)
+                break
+                -- BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel())
             end
         end
     end
