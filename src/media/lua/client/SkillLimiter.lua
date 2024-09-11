@@ -91,6 +91,7 @@ end
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
 local function AddXP(character, perk, level)
 
+    print("gli XP guadagnati sono: ", level)
     -- fix loop 
     if level < 0 then
         return

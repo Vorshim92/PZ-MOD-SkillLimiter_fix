@@ -92,10 +92,10 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
 
             if currentPerkLevel >= v:getMaxLevel() then
                 characterPz.addXP_PZ(character, v:getPerk(), -level, true, false, false)
-                break
                 -- BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel())
             end
         end
+        break
     end
 end
 
