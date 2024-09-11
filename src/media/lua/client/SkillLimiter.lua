@@ -132,6 +132,10 @@ end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(AddXP)
+Events.AddXP.Add(function (character, perk, level)
+    print("AddXP - " .. tostring(level))
+    
+end)
 Events.OnGameStart.Add(OnGameStart)
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
