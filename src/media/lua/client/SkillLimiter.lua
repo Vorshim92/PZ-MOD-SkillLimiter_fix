@@ -91,12 +91,6 @@ end
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
 local function AddXP(character, perk, level)
 
-    print("gli XP guadagnati sono: ", level)
-    -- fix loop 
-    if level < 0 then
-        return
-    end
-
     --- **Check if character is null**
     if not character then
         errHandler.errMsg("SkillLimiter.AddXP(character, perk, level)",
@@ -123,6 +117,12 @@ local function AddXP(character, perk, level)
         errHandler.errMsg("SkillLimiter.AddXP(character, perk, level)",
                 " CreateCharacterMaxSkillObj " .. errHandler.err.IS_NULL)
         return nil
+    end
+
+    print("gli XP guadagnati sono: ", level)
+    -- fix loop 
+    if level <= 0 then
+        return
     end
 
     blockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
