@@ -127,6 +127,8 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
     for _, v in pairs(CreateCharacterMaxSkillObj:getPerkDetails()) do
         if v:getPerk() == perk then
             print("dentro if v:getPerk() == perk")
+            print("v:getCurrentLevel(): ", v:getCurrentLevel())
+            print("v:getMaxLevel(): ", v:getMaxLevel())
             if v:getCurrentLevel() == maxLevel then
                 return
             end
