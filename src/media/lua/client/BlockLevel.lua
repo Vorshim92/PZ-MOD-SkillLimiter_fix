@@ -20,7 +20,8 @@ local BlockLevel = {}
 ---@return void
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 --- - PerkFactory : zombie.characters.skills.PerkFactory
-function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)
+function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel, level)
+    print("dentro blockLevel")
     --- **Check if character is null**
     if not character then
         errHandler.errMsg("BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)",
@@ -49,25 +50,34 @@ function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)
         return nil
     end
 
-    ---@type float
-    local convertLevelToXp_ = 0.0
-
-    if currentPerkLevel >= maxLevel then
-        ---@type int
-        for level_ = 1, maxLevel do
-            convertLevelToXp_ = convertLevelToXp_ +
-                    perkFactoryPZ.convertLevelToXp(perk, level_)
-        end
+    --- **Check if level is not nil**
+    if not level then
+        errHandler.errMsg("BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)",
+                " level " .. errHandler.err.IS_NULL_LEVEL)
+        return nil
     end
 
-    ---@type float
-    local totalXp = ( convertLevelToXp_ -
-            characterPz.getXp(character, perk))
+    -- ---@type float
+    -- local convertLevelToXp_ = 0.0
 
-    if totalXp == 0 then
-        return
-    end
+    -- if currentPerkLevel >= maxLevel then
+    --     ---@type int
+    --     for level_ = 1, maxLevel do
+    --         convertLevelToXp_ = convertLevelToXp_ +
+    --                 perkFactoryPZ.convertLevelToXp(perk, level_)
+    --     end
+    -- end
 
+    -- ---@type float
+    -- local totalXp = ( convertLevelToXp_ -
+    --         characterPz.getXp(character, perk))
+
+    -- if totalXp == 0 then
+    --     return
+    -- end
+
+    local totalXp = -level
+    print("totalXp: ", totalXp)
     characterPz.addXP_PZ(character, perk, totalXp, true, false, false)
 end
 
@@ -106,7 +116,7 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
     --- **Check if level is nil**
     if not level then
         errHandler.errMsg("BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, perk)",
-                " level " .. errHandler.err.IS_NULL)
+                " level " .. errHandler.err.IS_NULL_LEVEL)
         return nil
     end
 
@@ -121,8 +131,7 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
 
             if currentPerkLevel >= v:getMaxLevel() then
                 print("dentro if currentPerkLevel >= v:getMaxLevel()")
-                characterPz.addXP_PZ(character, v:getPerk(), -level, true, false, false)
-                -- BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel())
+                BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel(), level)
             end
         end
         break
