@@ -68,7 +68,7 @@ function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)
         return
     end
 
-    characterPz.addXP_PZ(character, perk, 0, true, false, false)
+    characterPz.addXP_PZ(character, perk, totalXp, true, false, false)
 end
 
 ---Calculate Block Level
