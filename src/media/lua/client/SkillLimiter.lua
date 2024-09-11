@@ -90,6 +90,12 @@ end
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
 local function AddXP(character, perk, level)
+
+    -- fix loop 
+    if level < 0 then
+        return
+    end
+
     --- **Check if character is null**
     if not character then
         errHandler.errMsg("SkillLimiter.AddXP(character, perk, level)",
