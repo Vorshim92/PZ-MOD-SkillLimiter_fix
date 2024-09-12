@@ -91,7 +91,7 @@ end
 ---@return void
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
-local function AddXP(character, perk, level)
+function SkillLimiter.AddXP(character, perk, level)
 
     --- **Check if character is null**
     if not character then
@@ -147,7 +147,7 @@ local function OnCreatePlayer(playerIndex, player)
 end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
-Events.AddXP.Add(AddXP)
+Events.AddXP.Add(SkillLimiter.AddXP)
 Events.OnGameStart.Add(OnGameStart)
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
