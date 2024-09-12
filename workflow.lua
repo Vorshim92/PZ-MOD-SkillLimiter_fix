@@ -1,4 +1,4 @@
-SkillLimiter Workflow
+SkillLimiter XP BLOCKING Workflow
 1.) SkillLimiter.lua
 
 Events.AddXP.Add(AddXP)
@@ -63,3 +63,32 @@ function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)
     characterPz.addXP_PZ(character, perk, totalXp, true, false, false)
 end
 
+SkillLimiter modData Workflow
+1.) SkillLimiter.lua
+
+Events.OnGameStart.Add(OnGameStart)
+Events.OnCreatePlayer.Add(OnCreatePlayer)
+
+-- questi 2 eventi triggherano SkillLimiter.initCharacter() che fa:
+
+-- creazione di un oggetto CharacterBaseObj con dentro i dettagli dei perk
+CreateCharacterMaxSkillObj =
+            characterMaxSkill.getCreateMaxSkill( debugDiagnostics.characterUpdate() )
+
+            -- getCreateMaxSkill(), alla quale viene passato l'isoplayer, richiama a sua volta una funzione characterCreation.getCharacterCreation 
+    2.) CharacterCreation.lua
+
+        --getCharacterCreatio:
+        characterAllPerks(character)
+        mergeTraitPerkFromProfession(character) --roba inutile??
+        setNoLimitsGroup()
+        setProfessionGroup()
+        setGenericGroup()
+
+
+        --- **Encode ModData**
+        characterMaxSkillTable =
+            codePerkDetails.encodePerkDetails(CreateCharacterMaxSkillObj)
+
+        --- **Save ModData**
+        modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)

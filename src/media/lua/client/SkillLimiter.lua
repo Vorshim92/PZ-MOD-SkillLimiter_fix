@@ -19,6 +19,7 @@ local debugDiagnostics = require("lib/DebugDiagnostics")
 local errHandler = require("lib/ErrHandler")
 local modDataManager = require("lib/ModDataManager")
 
+
 -- @type CharacterBaseObj
 local CreateCharacterMaxSkillObj -- = CharacterBaseObj:new()
 
@@ -51,8 +52,9 @@ function SkillLimiter.initCharacter()
     else
         --- **Init Part 2**
 
-        --- **Remove ModData**
-        modDataManager.remove(characterMaxSkillModData)
+        -- non serve visto che per entrare qui dentro non deve esistere xD (anche perché lo rimuovi già nelle altre funzioni)
+        -- --- **Remove ModData**
+        -- modDataManager.remove(characterMaxSkillModData)
 
         --- **Get skill obj**
         CreateCharacterMaxSkillObj =
@@ -119,11 +121,11 @@ local function AddXP(character, perk, level)
         return nil
     end
 
-    print("gli XP guadagnati sono: ", level)
-    -- fix loop 
-    if level <= 0 then
-        return
-    end
+    -- print("gli XP guadagnati sono: ", level)
+    -- -- fix loop 
+    -- if level <= 0 then
+    --     return
+    -- end
 
     blockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
 end
@@ -148,5 +150,7 @@ Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(AddXP)
 Events.OnGameStart.Add(OnGameStart)
 Events.OnCreatePlayer.Add(OnCreatePlayer)
+
+
 
 return SkillLimiter

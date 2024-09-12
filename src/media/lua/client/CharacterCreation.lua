@@ -180,7 +180,7 @@ function CharacterCreation.getCharacterCreation(character)
     end
 
     characterAllPerks(character)
-    mergeTraitPerkFromProfession(character)
+    mergeTraitPerkFromProfession(character) --roba inutile??
 
     setNoLimitsGroup()
     setProfessionGroup()

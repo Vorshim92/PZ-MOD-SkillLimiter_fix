@@ -78,7 +78,7 @@ function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel, leve
 
     local totalXp = -level
     print("totalXp: ", totalXp)
-    characterPz.addXP_PZ(character, perk, totalXp, true, false, false)
+    characterPz.addXP_PZ(character, perk, totalXp, false, false, false)
 end
 
 ---Calculate Block Level
