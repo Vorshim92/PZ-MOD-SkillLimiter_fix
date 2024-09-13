@@ -63,7 +63,7 @@ function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)
     characterPz.addXP_PZ(character, perk, totalXp, true, false, false)
 end
 
-SkillLimiter modData Workflow
+SkillLimiter modData Workflow when modData not exists
 1.) SkillLimiter.lua
 
 Events.OnGameStart.Add(OnGameStart)
@@ -92,3 +92,19 @@ CreateCharacterMaxSkillObj =
 
         --- **Save ModData**
         modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)
+
+
+
+
+SkillLimiter modData Workflow when modData exists
+1.) SkillLimiter.lua
+
+SkillLimiter.initCharacter()
+-- creazione di un oggetto CharacterBaseObj inizialmente vuoto
+CreateCharacterMaxSkillObj = CharacterBaseObj:new() 
+-- modDataManager.read ritorna una tabella con dentro le linee del ModData
+characterMaxSkillTable = modDataManager.read(characterMaxSkillModData)
+
+-- se c'è l'errore deve essere per forza dentro codePerkDetails.decodePerkDetails
+--  anche se molto più probabilmente l'errore risiede nel fatto che non entriamo mai qui ma when modData not exists
+CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)

@@ -42,20 +42,18 @@ function SkillLimiter.initCharacter()
 
     --- **Check if ModData exists**
     if modDataManager.isExists(characterMaxSkillModData) then
-
+        print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
-        characterMaxSkillTable =
-            modDataManager.read(characterMaxSkillModData)
+        characterMaxSkillTable = modDataManager.read(characterMaxSkillModData)
 
         --- **Decode ModData**
-        CreateCharacterMaxSkillObj =
-            codePerkDetails.decodePerkDetails(characterMaxSkillTable)
+        CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)
     else
+        print("SkillLimiter - ModData not exists")
         --- **Init Part 2**
 
-        -- non serve visto che per entrare qui dentro non deve esistere xD (anche perché lo rimuovi già nelle altre funzioni)
         -- --- **Remove ModData**
-        -- modDataManager.remove(characterMaxSkillModData)
+        modDataManager.remove(characterMaxSkillModData)
 
         --- **Get skill obj**
         CreateCharacterMaxSkillObj =
@@ -167,7 +165,7 @@ end
 --- - Triggered when a player is being created.
 local function OnCreatePlayer(playerIndex, player)
     --- **Remove ModData**
-    modDataManager.remove(characterMaxSkillModData)
+    -- modDataManager.remove(characterMaxSkillModData)
 
     --- **Init Create Character Max Skill object from initCharacter()**
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
@@ -175,8 +173,13 @@ end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(SkillLimiter.AddXP)
-Events.OnGameStart.Add(OnGameStart)
-Events.OnCreatePlayer.Add(OnCreatePlayer)
+Events.OnReceiveGlobalModData.Add(function (key, modData)
+    if key == characterMaxSkillModData then
+        OnGameStart()
+    end
+end)
+-- Events.OnGameStart.Add(OnGameStart)
+-- Events.OnCreatePlayer.Add(OnCreatePlayer)
 
 
 
