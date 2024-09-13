@@ -91,7 +91,6 @@ end
 function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
    
     print("dentro calculateBlockLevel")
-
     --- **Check if character is nil**
     if not character then
         errHandler.errMsg("BlockLevel.calculateBlockLevel(character, CreateCharacterMaxSkillObj, perk)",
@@ -121,7 +120,7 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
     end
 
     local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
-    print("currentPerkLevel: ", currentPerkLevel)
+    print("livello attuale del perk: ", currentPerkLevel)
     local maxLevel = characterPz.EnumNumbers.TEN
 
     for _, v in pairs(CreateCharacterMaxSkillObj:getPerkDetails()) do
@@ -129,7 +128,7 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
             print("dentro if v:getPerk() == perk")
             print("v:getCurrentLevel(): ", v:getCurrentLevel())
             print("v:getMaxLevel(): ", v:getMaxLevel())
-            if v:getCurrentLevel() == maxLevel then
+            if currentPerkLevel == maxLevel then
                 return
             end
         
@@ -137,7 +136,6 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
                 print("dentro if currentPerkLevel >= v:getMaxLevel()")
                 BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel(), level)
             end
-
             break
         end
     end

@@ -18,6 +18,7 @@ local codePerkDetails = require("CodePerkDetails")
 local debugDiagnostics = require("lib/DebugDiagnostics")
 local errHandler = require("lib/ErrHandler")
 local modDataManager = require("lib/ModDataManager")
+local characterPz = require("lib/CharacterPZ")
 
 
 -- @type CharacterBaseObj
@@ -121,13 +122,39 @@ function SkillLimiter.AddXP(character, perk, level)
         return nil
     end
 
-    -- print("gli XP guadagnati sono: ", level)
-    -- -- fix loop 
-    -- if level <= 0 then
-    --     return
-    -- end
+    print("gli XP guadagnati sono: " .. level .. " e sono per: " .. perk:getName())
+    -- fix loop 
+    if level <= 0 then
+        print("SkillLimiter: gli XP sono negativi quindi non continuo")
+        return
+    end
 
     blockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
+end
+
+function SkillLimiter.checkLevelMax(character, perk)
+    local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
+    print("checkLevelMax: livello attuale del perk: " .. currentPerkLevel .. " e nome del perk è : " .. perk:getName())
+    local maxLevel = characterPz.EnumNumbers.TEN
+    local result = false
+    for _, v in pairs(CreateCharacterMaxSkillObj:getPerkDetails()) do
+        if v:getPerk() == perk then
+            print("checkLevelMax: dentro if v:getPerk() == perk")
+            -- print("checkLevelMax: v:getCurrentLevel(): ", v:getCurrentLevel())
+            print("checkLevelMax: v:getMaxLevel(): ", v:getMaxLevel())
+            if currentPerkLevel == maxLevel then
+                result = true
+                return result
+            end
+        
+            if currentPerkLevel >= v:getMaxLevel() then
+                print("checkLevelMax: dentro if currentPerkLevel >= v:getMaxLevel() " .. currentPerkLevel .. " >= " .. v:getMaxLevel())
+                result = true
+            end
+            break
+        end
+    end
+    return result 
 end
 
 --- **Init Character**
