@@ -19,6 +19,8 @@ local debugDiagnostics = require("lib/DebugDiagnostics")
 local errHandler = require("lib/ErrHandler")
 local modDataManager = require("lib/ModDataManager")
 local characterPz = require("lib/CharacterPZ")
+--temporary fix, remove later
+local perkFactoryPZ = require("lib/PerkFactoryPZ")
 
 
 -- @type CharacterBaseObj
@@ -176,25 +178,30 @@ end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(SkillLimiter.AddXP)
--- Events.OnGameStart.Add(function ()
---     -- per capire in che momento viene chiamato questo  evento, se prima o dopo moddata
---     print("OnGameStart nasce qui")
---     -- OnGameStart()
--- end)
--- OnCreatePlayer non si può usare perché in quel momento non esistono ancora i ModData quindi verrebero cancellati da modDataManager.remove
+Events.OnGameStart.Add(function ()
+    --fix temporaneo per fixare gli xp negativi dei player, da tenere un mesetto nella mod, sperando venga applicato a più player possibili
+    local player = getPlayer();
+    for i = 0, Perks.getMaxIndex() - 1 do
+
+        ---@type PerkFactory.Perks
+        local perk = perkFactoryPZ.getPerk_PZ(Perks.fromIndex(i))
+
+        ---@type int
+        local level = characterPz.getPerkLevel_PZ(player, perk) 
+
+        ---@type double
+        local xp = characterPz.getXp(player, perk)
+
+        local actualXp = xp - ISSkillProgressBar.getPreviousXpLvl(perk, level)
+        if actualXp < 0 then
+            player:getXp():setXPToLevel(perk, level)
+        end
+    end
+    SyncXp(player)
+    end)
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
 
--- Events.OnInitGlobalModData.Add(function (isNewGame)
---     modData.request(characterMaxSkillModData)
--- end)
--- Events.OnReceiveGlobalModData.Add(function (key, modData)
---     print("OnReceiveGlobalModData: ", key)
---     -- forse questo non può funzionare se non viene prima chiamato 
---     if key == characterMaxSkillModData then
---         OnGameStart()
---     end
--- end)
 
 
 
