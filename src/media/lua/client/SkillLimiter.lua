@@ -166,7 +166,10 @@ end
 local function OnCreatePlayer(playerIndex, player)
     --- **Remove ModData** 
     -- modDataManager.remove(characterMaxSkillModData)
-
+    if modDataManager.isExists(characterMaxSkillModData) then
+        print("SkillLimiter.OnCreatePlayer - ModData exists")
+    end
+    
     --- **Init Create Character Max Skill object from initCharacter()**
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
 end
@@ -180,7 +183,6 @@ Events.OnGameStart.Add(function ()
 end)
 -- OnCreatePlayer non si può usare perché in quel momento non esistono ancora i ModData quindi verrebero cancellati da modDataManager.remove
 Events.OnCreatePlayer.Add(OnCreatePlayer)
-
 
 
 -- Events.OnInitGlobalModData.Add(function (isNewGame)
