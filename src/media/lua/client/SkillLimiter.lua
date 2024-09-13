@@ -52,8 +52,8 @@ function SkillLimiter.initCharacter()
         print("SkillLimiter - ModData not exists")
         --- **Init Part 2**
 
-        -- --- **Remove ModData**
-        modDataManager.remove(characterMaxSkillModData)
+        -- --- **Remove ModData** useless
+        -- modDataManager.remove(characterMaxSkillModData)
 
         --- **Get skill obj**
         CreateCharacterMaxSkillObj =
@@ -164,8 +164,8 @@ end
 --- **Init Character**
 --- - Triggered when a player is being created.
 local function OnCreatePlayer(playerIndex, player)
-    --- **Remove ModData**
-    modDataManager.remove(characterMaxSkillModData)
+    --- **Remove ModData** 
+    -- modDataManager.remove(characterMaxSkillModData)
 
     --- **Init Create Character Max Skill object from initCharacter()**
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
@@ -173,23 +173,26 @@ end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(SkillLimiter.AddXP)
-Events.OnInitGlobalModData.Add(function (isNewGame)
-    modData.request(characterMaxSkillModData)
-end)
-Events.OnReceiveGlobalModData.Add(function (key, modData)
-    print("OnReceiveGlobalModData: ", key)
-    -- forse questo non può funzionare se non viene prima chiamato 
-    if key == characterMaxSkillModData then
-        OnGameStart()
-    end
-end)
 Events.OnGameStart.Add(function ()
     -- per capire in che momento viene chiamato questo  evento, se prima o dopo moddata
     print("OnGameStart nasce qui")
-
+    -- OnGameStart()
 end)
 -- OnCreatePlayer non si può usare perché in quel momento non esistono ancora i ModData quindi verrebero cancellati da modDataManager.remove
--- Events.OnCreatePlayer.Add(OnCreatePlayer)
+Events.OnCreatePlayer.Add(OnCreatePlayer)
+
+
+
+-- Events.OnInitGlobalModData.Add(function (isNewGame)
+--     modData.request(characterMaxSkillModData)
+-- end)
+-- Events.OnReceiveGlobalModData.Add(function (key, modData)
+--     print("OnReceiveGlobalModData: ", key)
+--     -- forse questo non può funzionare se non viene prima chiamato 
+--     if key == characterMaxSkillModData then
+--         OnGameStart()
+--     end
+-- end)
 
 
 
