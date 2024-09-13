@@ -176,11 +176,11 @@ end
 
 Events.OnCharacterDeath.Add(OnCharacterDeath)
 Events.AddXP.Add(SkillLimiter.AddXP)
-Events.OnGameStart.Add(function ()
-    -- per capire in che momento viene chiamato questo  evento, se prima o dopo moddata
-    print("OnGameStart nasce qui")
-    -- OnGameStart()
-end)
+-- Events.OnGameStart.Add(function ()
+--     -- per capire in che momento viene chiamato questo  evento, se prima o dopo moddata
+--     print("OnGameStart nasce qui")
+--     -- OnGameStart()
+-- end)
 -- OnCreatePlayer non si può usare perché in quel momento non esistono ancora i ModData quindi verrebero cancellati da modDataManager.remove
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
