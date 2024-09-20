@@ -25,7 +25,7 @@ local perkFactoryPZ = require("lib/PerkFactoryPZ")
 
 -- @type CharacterBaseObj
 local CreateCharacterMaxSkillObj -- = CharacterBaseObj:new()
-
+local player = getPlayer();
 local SkillLimiter = {}
 
 ---@type string
@@ -43,10 +43,10 @@ function SkillLimiter.initCharacter()
     local characterMaxSkillTable -- = {}
 
     --- **Check if ModData exists**
-    if modDataManager.isExists(characterMaxSkillModData) then
+    if player:getModData().SkillLimiter then
         print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
-        characterMaxSkillTable = modDataManager.read(characterMaxSkillModData)
+        characterMaxSkillTable = player:getModData().SkillLimiter
 
         --- **Decode ModData**
         CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)
@@ -79,9 +79,9 @@ end
 ---@return void
 local function OnCharacterDeath(character)
     --- **Kill player**
-    if getPlayer():isDead() then
+    if getPlayer:isDead() then
         --- **Delete ModData**
-        modDataManager.remove(characterMaxSkillModData)
+        player:getModData().SkillLimiter = nil
     end
 end
 
@@ -169,7 +169,7 @@ end
 local function OnCreatePlayer(playerIndex, player)
     --- **Remove ModData** 
     -- modDataManager.remove(characterMaxSkillModData)
-    if modDataManager.isExists(characterMaxSkillModData) then
+    if player:getModData().SkillLimiter then
         print("SkillLimiter.OnCreatePlayer - ModData exists")
     end
     
@@ -177,7 +177,7 @@ local function OnCreatePlayer(playerIndex, player)
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
 end
 
-Events.OnCharacterDeath.Add(OnCharacterDeath)
+-- Events.OnCharacterDeath.Add(OnCharacterDeath) -- disabled temporary for testing events
 Events.AddXP.Add(SkillLimiter.AddXP)
 Events.OnGameStart.Add(function ()
     --fix temporaneo per fixare gli xp negativi dei player, da tenere un mesetto nella mod, sperando venga applicato a più player possibili

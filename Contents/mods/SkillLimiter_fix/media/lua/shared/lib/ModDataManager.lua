@@ -24,7 +24,6 @@ function ModDataManager.save(nameFile, values)
         return nil
     end
 
-    ModData.create(nameFile)
     if values then
         ModData.add(nameFile, values)
     end
@@ -34,30 +33,21 @@ end
 ---@param nameFile string
 ---@return table
 --- - ModData : zombie.world.moddata.ModData
-function ModDataManager.read(nameFile)
+function ModDataManager.readOrCreate(nameFile)
     if not nameFile then
-        errHandler.errMsg("ModDataManager.read(nameFile)",
-                " nameFile " .. errHandler.err.IS_NULL)
+        errHandler.errMsg("ModDataManager.readOrCreate(nameFile)", "nameFile " .. errHandler.err.IS_NULL)
         return nil
     end
 
-    local lines = {}
-    lines = ModData.get(nameFile)
+    -- Acquisisce direttamente la tabella con ModData.get
+    local modData = ModData.getOrCreate(nameFile)
 
-    if not lines then
-            errHandler.errMsg("ModDataManager.read(nameFile)",
-                " lines " .. errHandler.err.IS_NULL)
+    if not modData then
+        errHandler.errMsg("ModDataManager.readOrCreate(nameFile)", "modData " .. errHandler.err.IS_NULL)
         return nil
     end
 
-    ---@type table
-    local conversionTotable = {}
-
-    for _, v in pairs(lines) do
-        table.insert(conversionTotable, v)
-    end
-
-    return conversionTotable
+    return modData  -- Restituisce direttamente la tabella
 end
 
 --- **Is modData Exists**
@@ -108,7 +98,7 @@ function ModDataManager.displayAllTable()
         print("Name table - " .. v)
 
         ---@type table
-        local reads = ModDataManager.read(v)
+        local reads = ModDataManager.readOrCreate(v)
         for _, v2 in pairs(reads) do
             -- TODO : CharacterBoost mostra solo tabelle e non i valori
             print("Value of Moddata - " .. tostring(v2))
