@@ -66,7 +66,8 @@ function SkillLimiter.initCharacter()
             codePerkDetails.encodePerkDetails(CreateCharacterMaxSkillObj)
 
         --- **Save ModData**
-        modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)
+        player:getModData().SkillLimiter = characterMaxSkillTable
+        -- modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)
     end
 
     return CreateCharacterMaxSkillObj
