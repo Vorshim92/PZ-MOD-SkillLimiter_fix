@@ -25,7 +25,6 @@ local perkFactoryPZ = require("lib/PerkFactoryPZ")
 
 -- @type CharacterBaseObj
 local CreateCharacterMaxSkillObj -- = CharacterBaseObj:new()
-local player = getPlayer();
 local SkillLimiter = {}
 
 ---@type string
@@ -34,7 +33,7 @@ local characterMaxSkillModData = "characterMaxSkill"
 -- **Create Character Max Skill and create ModData**
 ---@return CharacterBaseObj
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
-function SkillLimiter.initCharacter()
+function SkillLimiter.initCharacter(player)
     --- **Init Part 1**
 
     CreateCharacterMaxSkillObj = CharacterBaseObj:new()
@@ -81,7 +80,7 @@ local function OnCharacterDeath(character)
     --- **Kill player**
     if getPlayer:isDead() then
         --- **Delete ModData**
-        player:getModData().SkillLimiter = nil
+        getPlayer:getModData().SkillLimiter = nil
     end
 end
 
