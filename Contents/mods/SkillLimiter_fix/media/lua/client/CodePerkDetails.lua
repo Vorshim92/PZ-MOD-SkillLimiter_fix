@@ -28,17 +28,15 @@ function CodePerkDetails.encodePerkDetails(characterObj)
     ---@type table
     local lines = {}
 
-    -- @param perk PerkFactory.Perk
-    -- @param level int
-    -- @param xp float
-    for _, v in pairs(characterObj:getPerkDetails()) do
-        local value = ( v.perk:getName() .. "-" ..
-                tostring(v:getCurrentLevel())  .. "-" ..
-                tostring(v:getMaxLevel())  .. "-" ..
-                tostring(v:getXp()))
+for _, v in pairs(characterObj:getPerkDetails()) do
+    local perkName = v.perk:getName()
+    lines[perkName] = {
+        currentLevel = v:getCurrentLevel(),
+        maxLevel = v:getMaxLevel(),
+        xp = v:getXp()
+    }
+end
 
-        table.insert(lines, value)
-    end
 
     return lines
 end
@@ -65,27 +63,21 @@ function CodePerkDetails.decodePerkDetails(characterPerkDetails)
     -- @param currentlevel int
     -- @param maxLevel
     -- @param xp float
-    for _, v in pairs(characterPerkDetails) do
-        for s in v:gmatch("[^\r-]+") do
-            table.insert(lines, s)
-        end
+    for perkName, details in pairs(characterPerkDetails) do
+    -- @type PerkDetailsObj
+    local PerkDetailsObj01 = PerkDetailsObj:new()
 
-        -- @type PerkDetailsObj
-        local PerkDetailsObj01 = PerkDetailsObj:new()
-
-        --- **Set Perk**
-        PerkDetailsObj01:setPerk(perkFactoryPZ.getPerkByName_PZ(lines[1]))
-        --- **Set Current Level**
-        PerkDetailsObj01:setCurrentLevel(tonumber(lines[2]))
-        --- **Set Max Level**
-        PerkDetailsObj01:setMaxLevel(tonumber(lines[3]))
-        --- **Set Xp**
-        PerkDetailsObj01:setXp(tonumber(lines[4]) + 0.0)
-        --- **Save Perk Details**
-        CharacterObj01:savePerkDetails(PerkDetailsObj01)
-
-        lines = {}
-    end
+    --- **Set Perk**
+    PerkDetailsObj01:setPerk(perkFactoryPZ.getPerkByName_PZ(perkName))
+    --- **Set Current Level**
+    PerkDetailsObj01:setCurrentLevel(details.currentLevel)
+    --- **Set Max Level**
+    PerkDetailsObj01:setMaxLevel(details.maxLevel)
+    --- **Set Xp**
+    PerkDetailsObj01:setXp(details.xp)
+    --- **Save Perk Details**
+    CharacterObj01:savePerkDetails(PerkDetailsObj01)
+end
 
     return CharacterObj01
 end
