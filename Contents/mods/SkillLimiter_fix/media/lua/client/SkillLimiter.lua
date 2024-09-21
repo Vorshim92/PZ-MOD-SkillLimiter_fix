@@ -170,7 +170,7 @@ local function OnCreatePlayer(playerIndex, player)
     -- start fixMigration
     if modDataManager.isExists(characterMaxSkillModData) then
         print("SkillLimiter: old DB in ModData exists")
-        local temp = modDataManager.read(characterMaxSkillModData)
+        local temp = modDataManager.readOrCreate(characterMaxSkillModData)
         player:getModData().SkillLimiter = temp
         modDataManager.remove(characterMaxSkillModData)
         print("SkillLimiter: old DB in ModData removed and trasnfered to new DB in getModData().SkillLimiter")

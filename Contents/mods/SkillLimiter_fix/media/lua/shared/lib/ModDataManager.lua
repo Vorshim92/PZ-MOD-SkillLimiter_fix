@@ -33,7 +33,7 @@ end
 ---@param nameFile string
 ---@return table
 --- - ModData : zombie.world.moddata.ModData
-function ModDataManager.read(nameFile)
+function ModDataManager.readOrCreate(nameFile)
     if not nameFile then
         errHandler.errMsg("ModDataManager.readOrCreate(nameFile)", "nameFile " .. errHandler.err.IS_NULL)
         return nil
