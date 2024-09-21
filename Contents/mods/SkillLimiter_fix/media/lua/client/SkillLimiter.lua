@@ -33,19 +33,19 @@ local characterMaxSkillModData = "characterMaxSkill"
 -- **Create Character Max Skill and create ModData**
 ---@return CharacterBaseObj
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
-function SkillLimiter.initCharacter(player)
+function SkillLimiter.initCharacter()
     --- **Init Part 1**
-
+    local character = getPlayer()
     CreateCharacterMaxSkillObj = CharacterBaseObj:new()
 
     ---@type table
     local characterMaxSkillTable -- = {}
 
     --- **Check if ModData exists**
-    if player:getModData().SkillLimiter then
+    if character:getModData().SkillLimiter and #player:getModData().SkillLimiter > 0 then
         print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
-        characterMaxSkillTable = player:getModData().SkillLimiter
+        characterMaxSkillTable = character:getModData().SkillLimiter
 
         --- **Decode ModData**
         CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)
@@ -65,7 +65,7 @@ function SkillLimiter.initCharacter(player)
             codePerkDetails.encodePerkDetails(CreateCharacterMaxSkillObj)
 
         --- **Save ModData**
-        player:getModData().SkillLimiter = characterMaxSkillTable
+        character:getModData().SkillLimiter = characterMaxSkillTable
         -- modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)
     end
 
@@ -154,7 +154,7 @@ function SkillLimiter.checkLevelMax(character, perk)
             break
         end
     end
-    return result 
+    return result
 end
 
 --- **Init Character**
@@ -171,14 +171,14 @@ local function OnCreatePlayer(playerIndex, player)
     -- start fixMigration
     if modDataManager.isExists(characterMaxSkillModData) then
         print("SkillLimiter: old DB in ModData exists")
-        local temp = modDataManager.readOrCreate(characterMaxSkillModData)
+        local temp = modDataManager.read(characterMaxSkillModData)
         player:getModData().SkillLimiter = temp
         modDataManager.remove(characterMaxSkillModData)
         print("SkillLimiter: old DB in ModData removed and trasnfered to new DB in getModData().SkillLimiter")
     end
     -- end fixMigration
 
-    if player:getModData().SkillLimiter then
+    if player:getModData().SkillLimiter and #player:getModData().SkillLimiter > 0 then
         print("SkillLimiter.OnCreatePlayer - ModData exists")
     end
     
@@ -209,6 +209,7 @@ Events.OnGameStart.Add(function ()
     end
     SyncXp(player)
     end)
+    -- OnCreatePlayer()
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
 
