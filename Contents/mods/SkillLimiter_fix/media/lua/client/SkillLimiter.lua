@@ -168,7 +168,17 @@ end
 --- - Triggered when a player is being created.
 local function OnCreatePlayer(playerIndex, player)
     --- **Remove ModData** 
-    -- modDataManager.remove(characterMaxSkillModData)
+
+    -- start fixMigration
+    if modDataManager.isExists(characterMaxSkillModData) then
+        print("SkillLimiter: old DB in ModData exists")
+        local temp = modDataManager.readOrCreate(characterMaxSkillModData)
+        player:getModData().SkillLimiter = temp
+        modDataManager.remove(characterMaxSkillModData)
+        print("SkillLimiter: old DB in ModData removed and trasnfered to new DB in getModData().SkillLimiter")
+    end
+    -- end fixMigration
+
     if player:getModData().SkillLimiter then
         print("SkillLimiter.OnCreatePlayer - ModData exists")
     end
