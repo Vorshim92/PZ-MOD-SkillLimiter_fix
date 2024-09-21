@@ -35,17 +35,16 @@ local characterMaxSkillModData = "characterMaxSkill"
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 function SkillLimiter.initCharacter()
     --- **Init Part 1**
-    local character = getPlayer()
     CreateCharacterMaxSkillObj = CharacterBaseObj:new()
 
     ---@type table
     local characterMaxSkillTable -- = {}
 
     --- **Check if ModData exists**
-    if character:getModData().SkillLimiter and #player:getModData().SkillLimiter > 0 then
+    if getPlayer():getModData().SkillLimiter and #getPlayer():getModData().SkillLimiter > 0 then
         print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
-        characterMaxSkillTable = character:getModData().SkillLimiter
+        characterMaxSkillTable = getPlayer():getModData().SkillLimiter
 
         --- **Decode ModData**
         CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)
@@ -65,7 +64,7 @@ function SkillLimiter.initCharacter()
             codePerkDetails.encodePerkDetails(CreateCharacterMaxSkillObj)
 
         --- **Save ModData**
-        character:getModData().SkillLimiter = characterMaxSkillTable
+        getPlayer():getModData().SkillLimiter = characterMaxSkillTable
         -- modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)
     end
 
