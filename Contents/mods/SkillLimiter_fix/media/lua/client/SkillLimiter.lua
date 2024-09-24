@@ -34,26 +34,23 @@ local characterMaxSkillModData = "characterMaxSkill"
 ---@return CharacterBaseObj
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 function SkillLimiter.initCharacter()
+    local player = getPlayer();
     --- **Init Part 1**
     CreateCharacterMaxSkillObj = CharacterBaseObj:new()
 
     ---@type table
     local characterMaxSkillTable -- = {}
-
     --- **Check if ModData exists**
-    if getPlayer():getModData().SkillLimiter and #getPlayer():getModData().SkillLimiter > 0 then
+    if player:getModData().skillLimiter and not table.isempty(player:getModData().skillLimiter) then
         print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
-        characterMaxSkillTable = getPlayer():getModData().SkillLimiter
+        characterMaxSkillTable = player:getModData().skillLimiter
 
         --- **Decode ModData**
         CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)
     else
         print("SkillLimiter - ModData not exists")
         --- **Init Part 2**
-
-        -- --- **Remove ModData** useless
-        -- modDataManager.remove(characterMaxSkillModData)
 
         --- **Get skill obj**
         CreateCharacterMaxSkillObj =
@@ -64,22 +61,21 @@ function SkillLimiter.initCharacter()
             codePerkDetails.encodePerkDetails(CreateCharacterMaxSkillObj)
 
         --- **Save ModData**
-        getPlayer():getModData().SkillLimiter = characterMaxSkillTable
-        -- modDataManager.save(characterMaxSkillModData, characterMaxSkillTable)
-    end
+        player:getModData().skillLimiter = characterMaxSkillTable
 
+    end
     return CreateCharacterMaxSkillObj
 end
 
 --- **Delete modData when character is death**
---- - Triggered when a character or zombie is killed
+--- - Triggered when a player is killed.
 ---@param character IsoGameCharacter
 ---@return void
-local function OnCharacterDeath(character)
+local function OnPlayerDeath(character)
     --- **Kill player**
-    if getPlayer:isDead() then
+    if getPlayer():isDead() then
         --- **Delete ModData**
-        getPlayer:getModData().SkillLimiter = nil
+        getPlayer():getModData().skillLimiter = nil
     end
 end
 
@@ -165,27 +161,22 @@ end
 --- **Init Character**
 --- - Triggered when a player is being created.
 local function OnCreatePlayer(playerIndex, player)
-    --- **Remove ModData** 
-
     -- start fixMigration
     if modDataManager.isExists(characterMaxSkillModData) then
         print("SkillLimiter: old DB in ModData exists")
-        local temp = modDataManager.readOrCreate(characterMaxSkillModData)
-        player:getModData().SkillLimiter = temp
+        local temp = modDataManager.read(characterMaxSkillModData)
+        player:getModData().skillLimiter = temp
         modDataManager.remove(characterMaxSkillModData)
         print("SkillLimiter: old DB in ModData removed and trasnfered to new DB in getModData().SkillLimiter")
     end
     -- end fixMigration
 
-    if player:getModData().SkillLimiter and #player:getModData().SkillLimiter > 0 then
-        print("SkillLimiter.OnCreatePlayer - ModData exists")
-    end
     
-    --- **Init Create Character Max Skill object from initCharacter()**
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
 end
 
--- Events.OnCharacterDeath.Add(OnCharacterDeath) -- disabled temporary for testing events
+
+Events.OnPlayerDeath.Add(OnPlayerDeath) -- disabled temporary for testing events
 Events.AddXP.Add(SkillLimiter.AddXP)
 Events.OnGameStart.Add(function ()
     --fix temporaneo per fixare gli xp negativi dei player, da tenere un mesetto nella mod, sperando venga applicato a più player possibili
@@ -208,7 +199,7 @@ Events.OnGameStart.Add(function ()
     end
     SyncXp(player)
     end)
-    -- OnCreatePlayer()
+      
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
 

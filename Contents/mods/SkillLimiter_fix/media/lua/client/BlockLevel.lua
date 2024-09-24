@@ -15,7 +15,7 @@ local BlockLevel = {}
 --- **Block Level**
 ---@param character IsoGameCharacter
 ---@param currentPerkLevel int
----@param perk PerkFactory
+---@param perk PerkFactory.Perk
 ---@param maxLevel int
 ---@return void
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
@@ -124,7 +124,7 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
     local maxLevel = characterPz.EnumNumbers.TEN
 
     for _, v in pairs(CreateCharacterMaxSkillObj:getPerkDetails()) do
-        if v:getPerk() == perk then
+        if v:getPerk() == perk:getId() then
             print("dentro if v:getPerk() == perk")
             print("v:getCurrentLevel(): ", v:getCurrentLevel())
             print("v:getMaxLevel(): ", v:getMaxLevel())
@@ -134,7 +134,7 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CreateCharacterM
         
             if currentPerkLevel >= v:getMaxLevel() then
                 print("dentro if currentPerkLevel >= v:getMaxLevel()")
-                BlockLevel.blockLevel(character, v:getPerk(), currentPerkLevel, v:getMaxLevel(), level)
+                BlockLevel.blockLevel(character, perk, currentPerkLevel, v:getMaxLevel(), level)
             end
             break
         end
