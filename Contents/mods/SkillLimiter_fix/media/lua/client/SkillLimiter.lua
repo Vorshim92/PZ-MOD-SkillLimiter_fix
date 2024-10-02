@@ -158,144 +158,151 @@ local function OnGameStart()
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
 end
 
---- **Init Character**
---- - Triggered when a player is being created.
-local function OnCreatePlayer(playerIndex, player)
-    -- Start fixMigration
--- Start fixMigration
-if modDataManager.isExists(characterMaxSkillModData) then
-    print("SkillLimiter: old DB in ModData exists")
-    local temp = ModData.get(characterMaxSkillModData)
+--- **Temp Migration for old DB save**
+--- this function will be removed in the future, like 3-6months, just to be sure
+local function fixMigration()
+    if modDataManager.isExists(characterMaxSkillModData) then
+        print("SkillLimiter: old DB in ModData exists")
+        local temp = ModData.get(characterMaxSkillModData)
 
-    -- Function to split a string by a separator (handles UTF-8 properly)
-    local function splitString(str, sep)
-        local t = {}
-        local pattern = string.format("([^%s]+)", sep)
-        for s in str:gmatch(pattern) do
-            table.insert(t, s)
+        -- Function to split a string by a separator (handles UTF-8 properly)
+        local function splitString(str, sep)
+            local t = {}
+            local pattern = string.format("([^%s]+)", sep)
+            for s in str:gmatch(pattern) do
+                table.insert(t, s)
+            end
+            return t
         end
-        return t
-    end
 
-    -- Mapping of Italian skill names to English
-    local skillNameMap = {
-        ["Cucinare"] = "Cooking",
-        ["Forma fisica"] = "Fitness",
-        ["Forza"] = "Strength",
-        ["Contundente"] = "Blunt",
-        ["Ascia"] = "Axe",
-        ["Corsa"] = "Sprinting",
-        ["Passo leggero"] = "Lightfoot",
-        ["Destrezza"] = "Nimble",
-        ["Furtivit" .. string.char(224)] = "Sneak",
-        ["Carpenteria"] = "Woodwork",
-        ["Mira"] = "Aiming",
-        ["Ricarica"] = "Reloading",
-        ["Coltivazione"] = "Farming",
-        ["Pesca"] = "Fishing",
-        ["Costruire Trappole"] = "Trapping",
-        ["Cercare Cibo"] = "PlantScavenging",
-        ["Pronto Soccorso"] = "Doctor",
-        ["Elettrica"] = "Electricity",
-        ["Lavorazione metalli"] = "MetalWelding",
-        ["Meccanica"] = "Mechanics",
-        ["Lancia"] = "Spear",
-        ["Manutenzione"] = "Maintenance",
-        ["Lama corta"] = "SmallBlade",
-        ["Lama lunga"] = "LongBlade",
-        ["Contundente corto"] = "SmallBlunt",
-        ["Sartoria"] = "Tailoring",
-    }
+        -- Mapping of Italian skill names to English
+        local skillNameMap = {
+            ["Cucinare"] = "Cooking",
+            ["Forma fisica"] = "Fitness",
+            ["Forza"] = "Strength",
+            ["Contundente"] = "Blunt",
+            ["Ascia"] = "Axe",
+            ["Corsa"] = "Sprinting",
+            ["Passo leggero"] = "Lightfoot",
+            ["Destrezza"] = "Nimble",
+            ["Furtivit" .. string.char(224)] = "Sneak",
+            ["Carpenteria"] = "Woodwork",
+            ["Mira"] = "Aiming",
+            ["Ricarica"] = "Reloading",
+            ["Coltivazione"] = "Farming",
+            ["Pesca"] = "Fishing",
+            ["Costruire Trappole"] = "Trapping",
+            ["Cercare Cibo"] = "PlantScavenging",
+            ["Pronto Soccorso"] = "Doctor",
+            ["Elettrica"] = "Electricity",
+            ["Lavorazione metalli"] = "MetalWelding",
+            ["Meccanica"] = "Mechanics",
+            ["Lancia"] = "Spear",
+            ["Manutenzione"] = "Maintenance",
+            ["Lama corta"] = "SmallBlade",
+            ["Lama lunga"] = "LongBlade",
+            ["Contundente corto"] = "SmallBlunt",
+            ["Sartoria"] = "Tailoring",
+        }
 
-    -- Create a set of allowed English skill names from skillNameMap values
-    local allowedEnglishSkills = {}
-    for _, v in pairs(skillNameMap) do
-        allowedEnglishSkills[v] = true
-    end
+        -- Create a set of allowed English skill names from skillNameMap values
+        local allowedEnglishSkills = {}
+        for _, v in pairs(skillNameMap) do
+            allowedEnglishSkills[v] = true
+        end
 
-    local newSkillLimiter = {}
+        local newSkillLimiter = {}
 
-    -- Function to determine if data is in Italian or English
-    local function isDataInItalian()
-        local sampleEntry = temp["2"]
-        if sampleEntry then
-            local components = splitString(sampleEntry, "-")
-            if #components >= 1 then
-                local skillNameRaw = components[1]:match("^%s*(.-)%s*$")
-                if skillNameRaw == ("Agilit".. string.char(224)) then
-                    return true
-                elseif skillNameRaw == "Agility" then
-                    return false
-                else
-                    -- Check if skillNameRaw is in skillNameMap
-                    if skillNameMap[skillNameRaw] then
+        -- Function to determine if data is in Italian or English
+        local function isDataInItalian()
+            local sampleEntry = temp["2"]
+            if sampleEntry then
+                local components = splitString(sampleEntry, "-")
+                if #components >= 1 then
+                    local skillNameRaw = components[1]:match("^%s*(.-)%s*$")
+                    if skillNameRaw == ("Agilit".. string.char(224)) then
                         return true
-                    else
+                    elseif skillNameRaw == "Agility" then
                         return false
+                    else
+                        -- Check if skillNameRaw is in skillNameMap
+                        if skillNameMap[skillNameRaw] then
+                            return true
+                        else
+                            return false
+                        end
                     end
                 end
             end
+            -- Default to Italian if unable to determine
+            return true
         end
-        -- Default to Italian if unable to determine
-        return true
-    end
 
-    local dataIsItalian = isDataInItalian()
+        local dataIsItalian = isDataInItalian()
 
-    -- Inform about the detected language
-    print("SkillLimiter: Data is in " .. (dataIsItalian and "Italian" or "English"))
+        -- Inform about the detected language
+        print("SkillLimiter: Data is in " .. (dataIsItalian and "Italian" or "English"))
 
-    -- Now process the data
-    for _, v in pairs(temp) do
-        -- Split the string into components
-        local components = splitString(v, "-")
-        if #components == 4 then
-            local skillNameRaw = components[1]
-            local currentLevel = components[2]
-            local maxLevel = components[3]
-            local xp = components[4]
+        -- Now process the data
+        for _, v in pairs(temp) do
+            -- Split the string into components
+            local components = splitString(v, "-")
+            if #components == 4 then
+                local skillNameRaw = components[1]
+                local currentLevel = components[2]
+                local maxLevel = components[3]
+                local xp = components[4]
 
-            -- Trim whitespace from skillNameRaw
-            skillNameRaw = skillNameRaw:match("^%s*(.-)%s*$")
-            
-            local skillName
-            if dataIsItalian then
-                -- Map the Italian skill name to English
-                skillName = skillNameMap[skillNameRaw]
-                if skillName then
-                    newSkillLimiter[skillName] = {
-                        currentLevel = tonumber(currentLevel),
-                        maxLevel = tonumber(maxLevel),
-                        xp = tonumber(xp),
-                    }
+                -- Trim whitespace from skillNameRaw
+                skillNameRaw = skillNameRaw:match("^%s*(.-)%s*$")
+
+                local skillName
+                if dataIsItalian then
+                    -- Map the Italian skill name to English
+                    skillName = skillNameMap[skillNameRaw]
+                    if skillName then
+                        newSkillLimiter[skillName] = {
+                            currentLevel = tonumber(currentLevel),
+                            maxLevel = tonumber(maxLevel),
+                            xp = tonumber(xp),
+                        }
+                    else
+                        -- Skill is not in the mapping; skip it
+                        print("SkillLimiter: Skipping skill '" .. skillNameRaw .. "' during migration.")
+                    end
                 else
-                    -- Skill is not in the mapping; skip it
-                    print("SkillLimiter: Skipping skill '" .. skillNameRaw .. "' during migration.")
+                    -- Data is in English, use skillNameRaw directly
+                    skillName = skillNameRaw
+                    -- Include only allowed English skills
+                    if allowedEnglishSkills[skillName] then
+                        newSkillLimiter[skillName] = {
+                            currentLevel = tonumber(currentLevel),
+                            maxLevel = tonumber(maxLevel),
+                            xp = tonumber(xp),
+                        }
+                    else
+                        print("SkillLimiter: Skipping skill '" .. skillName .. "' during migration.")
+                    end
                 end
             else
-                -- Data is in English, use skillNameRaw directly
-                skillName = skillNameRaw
-                -- Include only allowed English skills
-                if allowedEnglishSkills[skillName] then
-                    newSkillLimiter[skillName] = {
-                        currentLevel = tonumber(currentLevel),
-                        maxLevel = tonumber(maxLevel),
-                        xp = tonumber(xp),
-                    }
-                else
-                    print("SkillLimiter: Skipping skill '" .. skillName .. "' during migration.")
-                end
+                print("SkillLimiter: Error parsing skill data: " .. v)
             end
-        else
-            print("SkillLimiter: Error parsing skill data: " .. v)
         end
-    end
 
-    player:getModData().skillLimiter = newSkillLimiter
-    modDataManager.remove(characterMaxSkillModData)
-    print("SkillLimiter: old DB in ModData removed and transferred to new DB in getModData().skillLimiter")
+        player:getModData().skillLimiter = newSkillLimiter
+        modDataManager.remove(characterMaxSkillModData)
+        print("SkillLimiter: old DB in ModData removed and transferred to new DB in getModData().skillLimiter")
+    else 
+        print("SkillLimiter: old DB in ModData not exists")
+    end
 end
--- End fixMigration
+
+--- **Init Character**
+--- - Triggered when a player is being created.
+local function OnCreatePlayer(playerIndex, player)
+    -- Start fixMigration temporary
+    fixMigration()
+    -- End fixMigration
 
     CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
 end
