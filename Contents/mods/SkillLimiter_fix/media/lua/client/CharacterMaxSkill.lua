@@ -121,7 +121,7 @@ function CharacterMaxSkill.getCreateMaxSkill(character)
 
         --- **Set Maximum Level for Generic group**
         if value.group == group.GENERIC then
-            PerkDetailsObj01:setMaxLevel(CharacterMaxSkill.getRulePerk(0))
+            PerkDetailsObj01:setMaxLevel(CharacterMaxSkill.getRulePerk(value.currentLevel)) -- ? why here was 0?
         end
 
         --- **Set Perk Details**

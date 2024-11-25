@@ -24,8 +24,11 @@ local perkFactoryPZ = require("lib/PerkFactoryPZ")
 
 
 -- @type CharacterBaseObj
-local CreateCharacterMaxSkillObj -- = CharacterBaseObj:new()
+-- local CreateCharacterMaxSkillObj -- = CharacterBaseObj:new()
 local SkillLimiter = {}
+
+---@type table
+local CharacterMaxSkillTable = {}
 
 ---@type string
 local characterMaxSkillModData = "characterMaxSkill"
@@ -36,35 +39,34 @@ local characterMaxSkillModData = "characterMaxSkill"
 function SkillLimiter.initCharacter()
     local player = getPlayer();
     --- **Init Part 1**
-    CreateCharacterMaxSkillObj = CharacterBaseObj:new()
+    -- CreateCharacterMaxSkillObj = CharacterBaseObj:new()
 
-    ---@type table
-    local characterMaxSkillTable -- = {}
+    
     --- **Check if ModData exists**
     if player:getModData().skillLimiter and not table.isempty(player:getModData().skillLimiter) then
         print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
-        characterMaxSkillTable = player:getModData().skillLimiter
+        CharacterMaxSkillTable = player:getModData().skillLimiter
 
-        --- **Decode ModData**
-        CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(characterMaxSkillTable)
+        --- **Decode ModData** -- no more decoding
+        -- CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(CharacterMaxSkillTable)
     else
         print("SkillLimiter - ModData not exists")
         --- **Init Part 2**
 
         --- **Get skill obj**
-        CreateCharacterMaxSkillObj =
+        local CreateCharacterMaxSkillObj =
             characterMaxSkill.getCreateMaxSkill( debugDiagnostics.characterUpdate() )
 
         --- **Encode ModData**
-        characterMaxSkillTable =
+        CharacterMaxSkillTable =
             codePerkDetails.encodePerkDetails(CreateCharacterMaxSkillObj)
 
         --- **Save ModData**
-        player:getModData().skillLimiter = characterMaxSkillTable
+        player:getModData().skillLimiter = CharacterMaxSkillTable
 
     end
-    return CreateCharacterMaxSkillObj
+    return CharacterMaxSkillTable
 end
 
 --- **Delete modData when character is death**
@@ -110,10 +112,10 @@ function SkillLimiter.AddXP(character, perk, level)
         return nil
     end
 
-    --- **Check if CreateCharacterMaxSkillObj is null**
-    if not CreateCharacterMaxSkillObj then
+    --- **Check if CharacterMaxSkillTable is null**
+    if not CharacterMaxSkillTable then
         errHandler.errMsg("SkillLimiter.AddXP(character, perk, level)",
-                " CreateCharacterMaxSkillObj " .. errHandler.err.IS_NULL)
+                " CharacterMaxSkillTable " .. errHandler.err.IS_NULL)
         return nil
     end
 
@@ -124,38 +126,13 @@ function SkillLimiter.AddXP(character, perk, level)
         return
     end
 
-    blockLevel.calculateBlockLevel(character, perk, level, CreateCharacterMaxSkillObj)
-end
-
-function SkillLimiter.checkLevelMax(character, perk)
-    local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
-    print("checkLevelMax: livello attuale del perk: " .. currentPerkLevel .. " e nome del perk è : " .. perk:getName())
-    local maxLevel = characterPz.EnumNumbers.TEN
-    local result = false
-    for _, v in pairs(CreateCharacterMaxSkillObj:getPerkDetails()) do
-        if v:getPerk() == perk then
-            print("checkLevelMax: dentro if v:getPerk() == perk")
-            -- print("checkLevelMax: v:getCurrentLevel(): ", v:getCurrentLevel())
-            print("checkLevelMax: v:getMaxLevel(): ", v:getMaxLevel())
-            if currentPerkLevel == maxLevel then
-                result = true
-                return result
-            end
-        
-            if currentPerkLevel >= v:getMaxLevel() then
-                print("checkLevelMax: dentro if currentPerkLevel >= v:getMaxLevel() " .. currentPerkLevel .. " >= " .. v:getMaxLevel())
-                result = true
-            end
-            break
-        end
-    end
-    return result
+    blockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkillTable)
 end
 
 --- **Init Character**
 --- - Triggered after the start of a new game, and after a saved game has been loaded.
 local function OnGameStart()
-    CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
+    CharacterMaxSkillTable = SkillLimiter.initCharacter()
 end
 
 --- **Temp Migration for old DB save**
@@ -212,7 +189,7 @@ local function OnCreatePlayer(playerIndex, player)
     fixMigration()
     -- End fixMigration
 
-    CreateCharacterMaxSkillObj = SkillLimiter.initCharacter()
+    CharacterMaxSkillTable = SkillLimiter.initCharacter()
 end
 
 

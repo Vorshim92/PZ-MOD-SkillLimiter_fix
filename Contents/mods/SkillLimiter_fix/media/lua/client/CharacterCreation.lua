@@ -89,11 +89,13 @@ local function mergeTraitPerkFromProfession(character)
 
     --- **Merge Traits and Perks profession into a table**
     for _, v in pairs(CharacterProfessionObj:getPerkDetails()) do
+        print("mergeTraitPerkFromProfession: " .. v:getPerk():getName())
         addTraitsPerks(v:getPerk())
     end
 
     --- **Merge Traits and Perks into a table**
     for _, v in pairs(CharacterTraitsPerkObj:getPerkDetails()) do
+        print("mergeTraitPerkFromTraits: " .. v:getPerk():getName())
         addTraitsPerks(v:getPerk())
     end
 
@@ -115,6 +117,7 @@ local function characterAllPerks(character)
     local CharacterAllPerksObj = characterLib.getAllPerks(character)
 
     for _, v in pairs(CharacterAllPerksObj:getPerkDetails()) do
+        print("characterAllPerks: " .. v:getPerk():getName())
         addAllPerks(v:getPerk(), v:getCurrentLevel(), "", "")
     end
 end
