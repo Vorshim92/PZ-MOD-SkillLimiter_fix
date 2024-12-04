@@ -44,14 +44,14 @@ function SkillLimiter.initCharacter()
     
     --- **Check if ModData exists**
     if player:getModData().skillLimiter and not table.isempty(player:getModData().skillLimiter) then
-        print("SkillLimiter - ModData exists")
+        --print("SkillLimiter - ModData exists")
         --- **Read ModData, get all stats of the character**
         CharacterMaxSkillTable = player:getModData().skillLimiter
 
         --- **Decode ModData** -- no more decoding
         -- CreateCharacterMaxSkillObj = codePerkDetails.decodePerkDetails(CharacterMaxSkillTable)
     else
-        print("SkillLimiter - ModData not exists")
+        --print("SkillLimiter - ModData not exists")
         --- **Init Part 2**
 
         --- **Get skill obj**
@@ -119,10 +119,10 @@ function SkillLimiter.AddXP(character, perk, level)
         return nil
     end
 
-    print("gli XP guadagnati sono: " .. level .. " e sono per: " .. perk:getName())
+    --print("gli XP guadagnati sono: " .. level .. " e sono per: " .. perk:getName())
     -- fix loop 
     if level <= 0 then
-        print("SkillLimiter: gli XP sono negativi quindi non continuo")
+        --print("SkillLimiter: gli XP sono negativi quindi non continuo")
         return
     end
 
@@ -139,7 +139,7 @@ end
 --- this function will be removed in the future, like 3-6months, just to be sure
 local function fixMigration()
     if modDataManager.isExists(characterMaxSkillModData) then
-        print("SkillLimiter: old DB in ModData exists")
+        --print("SkillLimiter: old DB in ModData exists")
         local temp = ModData.get(characterMaxSkillModData)
 
         -- Function to split a string by a separator (handles UTF-8 properly)
@@ -174,11 +174,11 @@ local function fixMigration()
             end
             getPlayer():getModData().skillLimiter = perkLines
             modDataManager.remove(characterMaxSkillModData)
-            print("SkillLimiter: old DB in ModData removed and transferred to new DB in getModData().skillLimiter")
+            --print("SkillLimiter: old DB in ModData removed and transferred to new DB in getModData().skillLimiter")
         end
 
     else 
-        print("SkillLimiter: old DB in ModData not exists")
+        --print("SkillLimiter: old DB in ModData not exists")
     end
 end
 

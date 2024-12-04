@@ -21,7 +21,7 @@ local BlockLevel = {}
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 --- - PerkFactory : zombie.characters.skills.PerkFactory
 function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel, level)
-    print("dentro blockLevel")
+    --print("dentro blockLevel")
     --- **Check if character is null**
     if not character then
         errHandler.errMsg("BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel)",
@@ -77,7 +77,7 @@ function BlockLevel.blockLevel(character, perk, currentPerkLevel, maxLevel, leve
     -- end
 
     local totalXp = -level
-    print("totalXp: ", totalXp)
+    --print("totalXp: ", totalXp)
     characterPz.addXP_PZ(character, perk, totalXp, false, false, false)
 end
 
@@ -90,7 +90,7 @@ end
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
 function BlockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkillTable)
    
-    print("dentro calculateBlockLevel")
+    --print("dentro calculateBlockLevel")
     --- **Check if character is nil**
     if not character then
         errHandler.errMsg("BlockLevel.calculateBlockLevel(character, CharacterMaxSkillTable, perk)",
@@ -120,20 +120,20 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkil
     end
 
     local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
-    print("livello attuale del perk: ", currentPerkLevel) -- si blocca qui a volte. e non entra nel ciclo for. però se siamo arrivati qui vuol dire che CreateCharacterMaxSkillObj esiste se no ci saremmo bloccati prima col codice. quindi CreateCharacterMaxSkillObj è un oggetto valido ma i perk al suo interno non sono definiti magari? quindi errore nel decodePerkDetails? il ciclo for non da neanche errore, quindi non intera nulla.
+    --print("livello attuale del perk: ", currentPerkLevel) -- si blocca qui a volte. e non entra nel ciclo for. però se siamo arrivati qui vuol dire che CreateCharacterMaxSkillObj esiste se no ci saremmo bloccati prima col codice. quindi CreateCharacterMaxSkillObj è un oggetto valido ma i perk al suo interno non sono definiti magari? quindi errore nel decodePerkDetails? il ciclo for non da neanche errore, quindi non intera nulla.
     local maxLevel = characterPz.EnumNumbers.TEN
 
     for perkName, details in pairs(CharacterMaxSkillTable) do -- meglio iterare direttamente sulla tabella moddata, senza ricreare ogni volta sto inutile createcharactermaxskillobj.
         if perkName == perk:getId() then
-            print("dentro if v:getPerk() == perk")
-            print("v:getCurrentLevel(): ", details.currentLevel)
-            print("v:getMaxLevel(): ", details.maxLevel)
+            --print("dentro if v:getPerk() == perk")
+            --print("v:getCurrentLevel(): ", details.currentLevel)
+            --print("v:getMaxLevel(): ", details.maxLevel)
             if currentPerkLevel == maxLevel then
                 return
             end
         
             if currentPerkLevel >= details.maxLevel then
-                print("dentro if currentPerkLevel >= v:getMaxLevel()")
+                --print("dentro if currentPerkLevel >= v:getMaxLevel()")
                 BlockLevel.blockLevel(character, perk, currentPerkLevel, details.maxLevel, level)
             end
             break

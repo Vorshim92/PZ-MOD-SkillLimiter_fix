@@ -6,7 +6,7 @@ function ISSkillProgressBar:renderPerkRect()
     self.SkillLimitRect = getTexture("media/ui/SkillLimit.png")
     
     if not listPerksLimit then
-        print("checkSkillLimiter: SkillLimiter non è definito o non è una tabella")
+        --print("checkSkillLimiter: SkillLimiter non è definito o non è una tabella")
         return
     end
     local perkData = listPerksLimit[self.perk:getId()]

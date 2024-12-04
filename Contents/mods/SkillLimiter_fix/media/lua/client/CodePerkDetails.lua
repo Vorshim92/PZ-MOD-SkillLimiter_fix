@@ -29,7 +29,7 @@ function CodePerkDetails.encodePerkDetails(characterObj)
     local lines = {}
 
 for _, v in pairs(characterObj:getPerkDetails()) do
-    print(v.perk:getId())
+    --print(v.perk:getId())
     lines[v.perk:getId()] = {
         currentLevel = v:getCurrentLevel(),
         maxLevel = v:getMaxLevel(),
@@ -63,18 +63,18 @@ function CodePerkDetails.decodePerkDetails(characterPerkDetails)
     for perkName, details in pairs(characterPerkDetails) do
     -- @type PerkDetailsObj
     local PerkDetailsObj01 = PerkDetailsObj:new()
-    print("decodePerk name/id: ", perkName)
+    --print("decodePerk name/id: ", perkName)
     --- **Set Perk**
     PerkDetailsObj01:setPerk(perkName)
     --- **Set Current Level**
     PerkDetailsObj01:setCurrentLevel(details.currentLevel)
-    print("decodePerk current level: ", details.currentLevel)
+    --print("decodePerk current level: ", details.currentLevel)
     --- **Set Max Level**
     PerkDetailsObj01:setMaxLevel(details.maxLevel)
-    print("decodePerk max level: ", details.maxLevel)
+    --print("decodePerk max level: ", details.maxLevel)
     --- **Set Xp**
     PerkDetailsObj01:setXp(details.xp)
-    print("decodePerk xp: ", details.xp)
+    --print("decodePerk xp: ", details.xp)
     --- **Save Perk Details**
     CharacterObj01:savePerkDetails(PerkDetailsObj01)
 end
