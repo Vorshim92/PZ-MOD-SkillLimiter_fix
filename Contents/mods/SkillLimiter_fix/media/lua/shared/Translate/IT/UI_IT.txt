@@ -1,0 +1,12 @@
+UI_IT = {
+    UI_SL_Description = "<H1> <RGB:1,1,1> COME FUNZIONA IL LIMITATORE DI ABILITÀ! <LINE> <TEXT> " ..
+                        "<IMAGECENTRE:media/ui/exampleSkillLimiterIT.png> <LINE> " ..
+                        "<CENTRE> <SIZE:large> <RGB:1,0,0> I quadrati rossi indicano il limite di livello per ogni abilità. <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 1. <SPACE><RGB:1,1,1> Tutte le abilità sono limitate al livello <SPACE><RGB:0,1,0> 4 <RGB:1,1,1>, eccetto Forza e Fitness. <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 2. <SPACE><RGB:1,1,1> Usare <SPACE><RGB:0,1,0> 1 Punto Abilità <SPACE><RGB:1,1,1> sblocca il livello <SPACE><RGB:0,1,0> 6 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 3. <SPACE><RGB:1,1,1> Usare <SPACE><RGB:0,1,0> 2 Punti Abilità <SPACE><RGB:1,1,1> sblocca il livello <SPACE><RGB:0,1,0> 8 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 4. <SPACE><RGB:1,1,1> Usare <SPACE><RGB:0,1,0> 3 Punti Abilità <SPACE><RGB:1,1,1> sblocca il livello <SPACE><RGB:0,1,0> 10 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 5. <SPACE><RGB:1,1,1> Alcune abilità, come Sartoria, sono attualmente limitate al livello <SPACE><RGB:0,1,0> 6 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,1,1> Prevediamo di introdurre presto una professione dedicata per superare queste limitazioni. <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:large> <RGB:0,1,1> Buon divertimento con il Limitatore di Abilità! <LINE><LINE> ",
+}

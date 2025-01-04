@@ -1,0 +1,12 @@
+UI_EN = {
+    UI_SL_Description = "<H1> <RGB:1,1,1> HOW SKILL LIMITER WORKS! <LINE> <TEXT> " ..
+                        "<IMAGECENTRE:media/ui/exampleSkillLimiterEN.png> <LINE> " ..
+                        "<CENTRE> <SIZE:large> <RGB:1,0,0> Red squares indicate the level cap for each skill. <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 1. <SPACE><RGB:1,1,1> All skills are capped at level <SPACE><RGB:0,1,0> 4 <RGB:1,1,1>, except Strength and Fitness. <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 2. <SPACE><RGB:1,1,1> Using <SPACE><RGB:0,1,0> 1 Skill Point <SPACE><RGB:1,1,1> unlocks level <SPACE><RGB:0,1,0> 6 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 3. <SPACE><RGB:1,1,1> Using <SPACE><RGB:0,1,0> 2 Skill Points <SPACE><RGB:1,1,1> unlocks level <SPACE><RGB:0,1,0> 8 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 4. <SPACE><RGB:1,1,1> Using <SPACE><RGB:0,1,0> 3 Skill Points <SPACE><RGB:1,1,1> unlocks level <SPACE><RGB:0,1,0> 10 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,0.5,0> 5. <SPACE><RGB:1,1,1> Some skills, such as Tailoring, are currently capped at level <SPACE><RGB:0,1,0> 6 <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:medium> <RGB:1,1,1> We plan to introduce a dedicated profession to overcome these limitations soon. <LINE><LINE> " ..
+                        "<CENTRE> <SIZE:large> <RGB:0,1,1> Enjoy playing with Skill Limiter! <LINE><LINE> ",
+}
