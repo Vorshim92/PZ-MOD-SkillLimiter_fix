@@ -54,5 +54,7 @@ function CharacterCreationProfession:create()
     self.SLBtn:setAnchorTop(true);
     self.SLBtn:setAnchorBottom(false);
     self.SLBtn.borderColor = { r = 1, g = 1, b = 1, a = 0.1 };
-    self.mainPanel:addChild(self.SLBtn);
+    
+    if self.mainPanel then self.mainPanel:addChild(self.SLBtn)
+    else self:addChild(self.SLBtn) end
 end
