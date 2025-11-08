@@ -19,8 +19,6 @@ local debugDiagnostics = require("lib/DebugDiagnostics")
 local errHandler = require("lib/ErrHandler")
 local modDataManager = require("lib/ModDataManager")
 local characterPz = require("lib/CharacterPZ")
---temporary fix, remove later
-local perkFactoryPZ = require("lib/PerkFactoryPZ")
 
 
 -- @type CharacterBaseObj
@@ -36,8 +34,9 @@ local characterMaxSkillModData = "characterMaxSkill"
 -- **Create Character Max Skill and create ModData**
 ---@return CharacterBaseObj
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
-function SkillLimiter.initCharacter()
-    local player = getPlayer();
+function SkillLimiter.initCharacter(playerIndex, player)
+    local localPlayer = getSpecificPlayer(playerIndex) or player
+    local player = localPlayer or getPlayer()
     --- **Init Part 1**
     -- CreateCharacterMaxSkillObj = CharacterBaseObj:new()
 
@@ -69,15 +68,77 @@ function SkillLimiter.initCharacter()
     return CharacterMaxSkillTable
 end
 
+--- **Check if character can receive XP without exceeding skill limit**
+--- - Utility function for other mods (e.g., UltimateXPTweaker) to check before adding XP
+---@param character IsoGameCharacter
+---@param perk PerkFactory.Perk
+---@return boolean true if can add XP, false if at max level
+--- - IsoGameCharacter : zombie.characters.IsoGameCharacter
+--- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
+function SkillLimiter.canAddXP(character, perk)
+    --- **Check if character is null**
+    if not character then
+        return true  -- Default to true to avoid blocking XP if validation fails
+    end
+
+    --- **Check if perk is null**
+    if not perk then
+        return true
+    end
+
+    --- **Check if CharacterMaxSkillTable is initialized**
+    if not CharacterMaxSkillTable or table.isempty(CharacterMaxSkillTable) then
+        return true  -- If not initialized, don't block XP
+    end
+
+    --- **Get current perk level**
+    local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
+    if not currentPerkLevel then
+        return true
+    end
+
+    --- **Check base max level (10)**
+    local maxLevel = characterPz.EnumNumbers.TEN
+    if currentPerkLevel >= maxLevel then
+        return false  -- Already at absolute max
+    end
+
+    --- **Check custom skill limit from CharacterMaxSkillTable**
+    local perkId = perk:getId()
+    local details = CharacterMaxSkillTable[perkId]
+
+    if not details then
+        return true  -- Perk not tracked, allow XP
+    end
+
+    --- **Check if at custom max level**
+    if currentPerkLevel >= details.maxLevel then
+        return false  -- At or above custom limit
+    end
+
+    return true  -- Can add XP
+end
+
+--- **Check if character is at max level for a skill**
+--- - Inverse semantics of canAddXP for compatibility with existing code
+---@param character IsoGameCharacter
+---@param perk PerkFactory.Perk
+---@return boolean true if at max level, false if can still add XP
+--- - IsoGameCharacter : zombie.characters.IsoGameCharacter
+--- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
+function SkillLimiter.isAtMaxLevel(character, perk)
+    return not SkillLimiter.canAddXP(character, perk)
+end
+
 --- **Delete modData when character is death**
 --- - Triggered when a player is killed.
 ---@param character IsoGameCharacter
 ---@return void
 local function OnPlayerDeath(character)
     --- **Kill player**
-    if getPlayer():isDead() then
+    if character:isDead() then
         --- **Delete ModData**
-        getPlayer():getModData().skillLimiter = nil
+        character:getModData().skillLimiter = nil
     end
 end
 
@@ -120,103 +181,26 @@ function SkillLimiter.AddXP(character, perk, level)
     end
 
     --print("gli XP guadagnati sono: " .. level .. " e sono per: " .. perk:getName())
-    -- fix loop 
+    -- fix loop
     if level <= 0 then
         --print("SkillLimiter: gli XP sono negativi quindi non continuo")
         return
     end
 
-    blockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkillTable)
-end
-
---- **Init Character**
---- - Triggered after the start of a new game, and after a saved game has been loaded.
-local function OnGameStart()
-    CharacterMaxSkillTable = SkillLimiter.initCharacter()
-end
-
---- **Temp Migration for old DB save**
---- this function will be removed in the future, like 3-6months, just to be sure
-local function fixMigration()
-    if modDataManager.isExists(characterMaxSkillModData) then
-        --print("SkillLimiter: old DB in ModData exists")
-        local temp = ModData.get(characterMaxSkillModData)
-
-        -- Function to split a string by a separator (handles UTF-8 properly)
-        local function splitString(str, sep)
-            local t = {}
-            local pattern = string.format("([^%s]+)", sep)
-            for s in str:gmatch(pattern) do
-                table.insert(t, s)
-            end
-            return t
-        end
-
-        local perkLines = {}
-        if temp then
-            for _, v in pairs(temp) do
-                local components = splitString(v, "-")
-                if #components == 4 then
-                    local perkName = components[1]
-                    local currentLevel = components[2]
-                    local maxLevel = components[3]
-                    local xp = components[4]
-                
-                    local perk = PerkFactory.getPerkFromName(perkName) or Perks[perkName]
-                    if perk:getParent():getName() ~= "None" then
-                        perkLines[perk:getId()] = {
-                            currentLevel = tonumber(currentLevel),
-                            maxLevel = tonumber(maxLevel),
-                            xp = tonumber(xp),
-                        }
-                    end
-                end
-            end
-            getPlayer():getModData().skillLimiter = perkLines
-            modDataManager.remove(characterMaxSkillModData)
-            --print("SkillLimiter: old DB in ModData removed and transferred to new DB in getModData().skillLimiter")
-        end
-
-    else 
-        --print("SkillLimiter: old DB in ModData not exists")
-    end
+    -- Calcola currentPerkLevel una volta sola per evitare chiamata Java ridondante
+    local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
+    blockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkillTable, currentPerkLevel)
 end
 
 --- **Init Character**
 --- - Triggered when a player is being created.
 local function OnCreatePlayer(playerIndex, player)
-    -- Start fixMigration temporary
-    fixMigration()
-    -- End fixMigration
-
-    CharacterMaxSkillTable = SkillLimiter.initCharacter()
+    CharacterMaxSkillTable = SkillLimiter.initCharacter(playerIndex, player)
 end
 
 
-Events.OnPlayerDeath.Add(OnPlayerDeath) -- disabled temporary for testing events
+Events.OnPlayerDeath.Add(OnPlayerDeath)
 Events.AddXP.Add(SkillLimiter.AddXP)
-Events.OnGameStart.Add(function ()
-    --fix temporaneo per fixare gli xp negativi dei player, da tenere un mesetto nella mod, sperando venga applicato a più player possibili
-    local player = getPlayer();
-    for i = 0, Perks.getMaxIndex() - 1 do
-
-        ---@type PerkFactory.Perks
-        local perk = perkFactoryPZ.getPerk_PZ(Perks.fromIndex(i))
-
-        ---@type int
-        local level = characterPz.getPerkLevel_PZ(player, perk) 
-
-        ---@type double
-        local xp = characterPz.getXp(player, perk)
-
-        local actualXp = xp - ISSkillProgressBar.getPreviousXpLvl(perk, level)
-        if actualXp < 0 then
-            player:getXp():setXPToLevel(perk, level)
-        end
-    end
-    SyncXp(player)
-    end)
-      
 Events.OnCreatePlayer.Add(OnCreatePlayer)
 
 

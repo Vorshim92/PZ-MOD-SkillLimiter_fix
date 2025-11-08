@@ -84,11 +84,13 @@ end
 ---Calculate Block Level
 ---@param character IsoGameCharacter
 ---@param perk PerkFactory.Perk
+---@param level int
 ---@param CharacterMaxSkillTable table
+---@param currentPerkLevel int|nil
 ---@return void
 --- - IsoGameCharacter : zombie.characters.IsoGameCharacter
 --- - PerkFactory.Perk : zombie.characters.skills.PerkFactory.Perk
-function BlockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkillTable)
+function BlockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkillTable, currentPerkLevel)
    
     --print("dentro calculateBlockLevel")
     --- **Check if character is nil**
@@ -119,25 +121,33 @@ function BlockLevel.calculateBlockLevel(character, perk, level, CharacterMaxSkil
         return nil
     end
 
-    local currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
-    --print("livello attuale del perk: ", currentPerkLevel) -- si blocca qui a volte. e non entra nel ciclo for. però se siamo arrivati qui vuol dire che CreateCharacterMaxSkillObj esiste se no ci saremmo bloccati prima col codice. quindi CreateCharacterMaxSkillObj è un oggetto valido ma i perk al suo interno non sono definiti magari? quindi errore nel decodePerkDetails? il ciclo for non da neanche errore, quindi non intera nulla.
+    -- Usa currentPerkLevel passato come parametro, altrimenti calcolalo (backward compatibility)
+    if not currentPerkLevel then
+        currentPerkLevel = characterPz.getPerkLevel_PZ(character, perk)
+    end
+    --print("livello attuale del perk: ", currentPerkLevel)
     local maxLevel = characterPz.EnumNumbers.TEN
 
-    for perkName, details in pairs(CharacterMaxSkillTable) do -- meglio iterare direttamente sulla tabella moddata, senza ricreare ogni volta sto inutile createcharactermaxskillobj.
-        if perkName == perk:getId() then
-            --print("dentro if v:getPerk() == perk")
-            --print("v:getCurrentLevel(): ", details.currentLevel)
-            --print("v:getMaxLevel(): ", details.maxLevel)
-            if currentPerkLevel == maxLevel then
-                return
-            end
-        
-            if currentPerkLevel >= details.maxLevel then
-                --print("dentro if currentPerkLevel >= v:getMaxLevel()")
-                BlockLevel.blockLevel(character, perk, currentPerkLevel, details.maxLevel, level)
-            end
-            break
-        end
+    -- Accesso diretto O(1) invece di loop O(n)
+    local perkId = perk:getId()
+    local details = CharacterMaxSkillTable[perkId]
+
+    if not details then
+        -- Perk non tracciato nella tabella
+        return
+    end
+
+    --print("dentro if v:getPerk() == perk")
+    --print("v:getCurrentLevel(): ", details.currentLevel)
+    --print("v:getMaxLevel(): ", details.maxLevel)
+
+    if currentPerkLevel == maxLevel then
+        return
+    end
+
+    if currentPerkLevel >= details.maxLevel then
+        --print("dentro if currentPerkLevel >= v:getMaxLevel()")
+        BlockLevel.blockLevel(character, perk, currentPerkLevel, details.maxLevel, level)
     end
 end
 
